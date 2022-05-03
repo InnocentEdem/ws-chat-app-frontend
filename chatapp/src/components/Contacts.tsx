@@ -90,7 +90,10 @@ function Contacts({ contactList, fetchOneChat, setRecipientEmail,blockUser,block
       }else{
         blockUser(contactList[blockUserIndex])
       }
-      window.location.reload()
+      setTimeout(()=>{
+        window.location.reload()
+      },2000)
+    
 
     }
 

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Alert, AlertTitle, Box, Snackbar, SnackbarOrigin } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Chats from "./components/Chats";
 import Api from "./components/services/api";
@@ -15,6 +15,9 @@ interface IMessage {
   sent_by: string;
   sent_to: string;
   updatedAt: Date;
+}
+export interface State extends SnackbarOrigin {
+  open: boolean;
 }
 
 function ChatPageLayout({ client }: { client?: any }) {
@@ -34,9 +37,23 @@ function ChatPageLayout({ client }: { client?: any }) {
   const [activeChat, setActiveChat] = useState(0);
   const [blockList, setBlockList] = useState<string[]|undefined>();
   const [usersBlockedByCurrentUser, setUsersBlockedByCurrentUser] = useState<string[]>()
+  const [snackbarState, setSnackbarState] = useState({open:false, message:"",severity:0,title:""})
 
+
+  const handleClose =()=>{
+    setSnackbarState(prev=>{return{...prev,open:false}})
+  }
+  const handleSnackAlert=(message:string,severity:number,title:string)=>{
+
+    setSnackbarState(prev=>{return{...prev,open:true,message,severity,title}})
+    setTimeout(()=>{
+      handleClose()
+    },3000)
+
+  }
+  
   client.onopen = () => {
-    console.log("connection open");
+    
   };
   client.onmessage = (message: any) => {
     console.log("message received");
@@ -61,6 +78,9 @@ function ChatPageLayout({ client }: { client?: any }) {
   };
 
   client.onclose = () => {
+    handleSnackAlert("Your connection was terminated",
+        1,"Connection Error"
+      )
   };
 
   //message utilities
@@ -75,6 +95,9 @@ function ChatPageLayout({ client }: { client?: any }) {
 
       client.send(JSON.stringify({ payload, action }));
     } else {
+      handleSnackAlert("Select a User and enter some text to start chatting",
+        1,"Message Error"
+      )
     }
   };
 
@@ -98,6 +121,9 @@ function ChatPageLayout({ client }: { client?: any }) {
 
     if (payload?.blocked_by && payload?.user_blocked) {
       client.send(JSON.stringify({ payload, action }));
+      handleSnackAlert(`${userEmail} blocked`,
+        0,"Block User"
+      )
     }
   };
   const unBlockUser = (userEmail: string) => {
@@ -105,6 +131,9 @@ function ChatPageLayout({ client }: { client?: any }) {
     const action = "unblock_user";
     if (payload?.blocked_by && payload?.user_blocked) {
       client.send(JSON.stringify({ payload, action }));
+      handleSnackAlert(`${userEmail} unblocked`,
+        0,"Unblock User"
+      )
     }
   };
 
@@ -127,8 +156,19 @@ function ChatPageLayout({ client }: { client?: any }) {
             messages={messages}
             messageString={messageString}
             sendNewMessage={sendNewMessage}
+            handleSnackAlert = {handleSnackAlert}
           />
         </Box>
+        <Snackbar
+        anchorOrigin={{ vertical:"top" , horizontal:"center" }}
+        open={snackbarState.open}
+        onClose={handleClose}
+      >
+        <Alert severity={snackbarState.severity === 1? "error":"success"}>
+        <AlertTitle>{snackbarState?.title}</AlertTitle>
+         {snackbarState.message}
+        </Alert>
+      </Snackbar>
       </Box>
     </>
   );

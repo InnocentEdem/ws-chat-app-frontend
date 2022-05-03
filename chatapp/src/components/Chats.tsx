@@ -21,11 +21,13 @@ interface IMessage {
 function Chats({
   messages,
   messageString,
-  sendNewMessage
+  sendNewMessage,
+  handleSnackAlert
 }: {
   messages?: IMessage [];
   messageString: string;
   sendNewMessage:any
+  handleSnackAlert:any;
 }) {
   const [messageValue, setMessageValue] = useState("")
   const {user} = useAuth0()

@@ -20,27 +20,25 @@ function ActiveChat({ currentUser }: { currentUser: string }) {
           margin: "0rem 1rem",
         }}
       >
-        <Box
-          sx={{display:"flex", alignItems:"center"}}
-        >
-          <Avatar sx={{marginRight:"1rem"}}/>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Avatar sx={{ marginRight: "1rem" }} />
           <p>{currentUser}</p>
         </Box>
         <Tooltip placement="top" title={"Logout"}>
-        <SvgIcon
-          onClick={() => logout({ returnTo: window.location.origin })}
-          sx={{
-            cursor: "pointer",
-            color: "f7f7f7",
-            margin: "0rem 10rem",
-            fontSize: "2rem",
-            border: "solid",
-            borderRadius: "50%",
-            padding: "0.4rem",
-          }}
-        >
-          <LogoutIcon />
-        </SvgIcon>
+          <SvgIcon
+            onClick={() => logout({ returnTo: window.location.origin })}
+            sx={{
+              cursor: "pointer",
+              color: "f7f7f7",
+              margin: "0rem 10rem",
+              fontSize: "2rem",
+              border: "solid",
+              borderRadius: "50%",
+              padding: "0.4rem",
+            }}
+          >
+            <LogoutIcon />
+          </SvgIcon>
         </Tooltip>
       </Card>
     </>
