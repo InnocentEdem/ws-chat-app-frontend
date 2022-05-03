@@ -6,3 +6,14 @@
     align-items: center;
 
 }
+
+.activeclass{
+    background-color:#c6f9c0 !important;
+}
+.inactiveclass{
+    background-color:#eaeaea !important;
+
+}
+.new{
+    background-color: brown;
+}
