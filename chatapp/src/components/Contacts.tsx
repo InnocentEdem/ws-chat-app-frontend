@@ -39,6 +39,7 @@ function Contacts({ contactList, fetchOneChat, setRecipientEmail,blockUser,block
   const [toggleMenu, setToggleMenu] = useState(false)
   const [openDialog, setOpenDialog] = React.useState(false);
   const [blockUserIndex, setBlockUserIndex] = useState<number>()
+  const [modalText,setModalText] = useState({heading:" ",text:" "})
 
 
   const[ activeContact, setActiveContact] = useState(0)
@@ -65,17 +66,21 @@ function Contacts({ contactList, fetchOneChat, setRecipientEmail,blockUser,block
   };
   const handleClose = (event?:any) => {
     if(event){event.stopPropagation()}
-    console.log("closed");
     
     setAnchorEl(null);
   };
   const handleSelection = (index:number) =>{
-      handleClickOpen()
       handleClose()
       setBlockUserIndex(index)
+      if(blockList?.includes(contactList[index])){
+        setModalText(prev => {return {...prev,heading:"Unblock User?", text:"Do you want to unblock this User?"}})
+      }
+      else{
+        setModalText(prev => {return {...prev,heading:"Block User?", text:"Do you want to block this User?"}})
+      }
+      handleClickOpen()
   }
   const handleBlockUserAccept = ()=>{
-      console.log("in",);
       
     if( typeof blockUserIndex==="number"){
 
@@ -158,14 +163,14 @@ function Contacts({ contactList, fetchOneChat, setRecipientEmail,blockUser,block
                     minWidth:"25rem"
                   }}
                 >
-                  <Avatar sx={{ marginRight: "2rem" }} />
-                  <span>{element}</span>
+                  <Avatar sx={{ marginRight: "3rem" }} />
+                  <span style={{width:"60%"}}>{element}</span>
                   <Box
                     onClick={handleClick}
-                    sx={{}}
+                    sx={{display:"flex", justifyContent:"flex-end"}}
                   >
                   <MoreVertIcon
-                    sx={{marginLeft:"3rem",fontSize:"2.5rem"}}
+                    sx={{marginLeft:"0rem",fontSize:"2.5rem"}}
                   />
                   <Menu
                     id="fade-menu"
@@ -195,13 +200,10 @@ function Contacts({ contactList, fetchOneChat, setRecipientEmail,blockUser,block
         onClose={handleCloseDialog}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Block This User?"}</DialogTitle>
+        <DialogTitle>{modalText?.heading}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-          {((blockList && blockUserIndex) && blockList.includes(contactList[blockUserIndex])) ?
-           " Do you want to unblock this user?":
-           " Do you want to block this user"
-           }
+          {modalText.text}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

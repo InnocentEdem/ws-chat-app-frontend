@@ -22,14 +22,12 @@ function WsLayer() {
         audience: `localhost:5003`,
         scope: "read:current_user",
       });
-      console.log(newToken);
       
       setToken(newToken);      
     };
 
 
     const handleLiveMessages =  () => {
-        console.log("ghjkfghjkfghjmk,",token);
         
     const client = new W3CWebsocket(`ws://127.0.0.1:5003/websockets?check=${token}`);  
       return client
@@ -43,8 +41,7 @@ function WsLayer() {
           });
           await Api("http://localhost:5003", accessToken).get("/authorized");
           handleLiveMessages();
-        } catch (err) {console.log(err);
-        }
+        } catch (err) {}
       };
       useEffect(()=>{
         show();

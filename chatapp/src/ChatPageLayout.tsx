@@ -47,14 +47,12 @@ function ChatPageLayout({ client }: { client?: any }) {
       const filter2 = filter1?.filter((e: string) => !blockList?.includes(e))
       setUsersOnline(filter2)
     } else if (newMessage.category === "block_list") {
-      console.log(newMessage.blockList);
       const filtered = newMessage.blockList.map(
         (element: any) => element.blocked_by
       );
       setBlockList([...filtered]);
     } else if(newMessage.category === "block_list_for_blocker"){
       setUsersBlockedByCurrentUser(newMessage?.blockListForBlocker?.map((element:any)=>element.user_blocked))
-      console.log(newMessage,"nnnnnnnnnnnnnnnnnneeeeeeeeeeeeeeeeeeewwwwwwwwwwwwwwwwwww");
             
     }
     else{
@@ -63,14 +61,12 @@ function ChatPageLayout({ client }: { client?: any }) {
   };
 
   client.onclose = () => {
-    console.log("connection closed!");
   };
 
   //message utilities
   const setRecipientEmail = (value: string) => {
     setSent_to(value);
   };
-  console.log(blockList);
 
   const sendNewMessage = (value: string) => {
     if (value && sent_to) {
@@ -79,7 +75,6 @@ function ChatPageLayout({ client }: { client?: any }) {
 
       client.send(JSON.stringify({ payload, action }));
     } else {
-      console.log("some values empty");
     }
   };
 
