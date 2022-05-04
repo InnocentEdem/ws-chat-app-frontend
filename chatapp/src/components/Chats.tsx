@@ -5,6 +5,7 @@ import SentChatText from './SentChatText';
 import ReceivedChatText from './ReceivedChatText';
 import { useAuth0 } from "@auth0/auth0-react";
 import useChatScroll from "../hooks/useChatRef"
+import { EventOutlined } from '@mui/icons-material';
 
 
 interface IMessage {
@@ -33,11 +34,23 @@ function Chats({
   const {user} = useAuth0()
   const chatRef = useRef<HTMLDivElement>(null)
   const ref = useChatScroll(messages)
+  const sendRef = useRef(null)
 
 
   const  handleMessageInput = (event:any)=>{
     setMessageValue(event.target.value)
   }
+
+  const handleKeyPress=(e:any)=>{    
+    if(e.key ==="Enter"){
+      sendNewMessage(messageValue)
+      setMessageValue("")
+    }
+  }
+  useEffect(()=>{
+  
+  })
+  
  useEffect(()=>{
    const scroll =()=>{
     if(chatRef.current){
@@ -90,7 +103,9 @@ function Chats({
       >
         <FormControl sx={{ width: "30vw", margin: "5rem" }}>
           <TextField 
+          inputRef={sendRef}
           onChange={handleMessageInput} 
+          onKeyUp={handleKeyPress}
           value={messageValue} />
         </FormControl>
 

@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Snackbar, SnackbarOrigin } from "@mui/material";
+import { Alert, AlertTitle, Box, CssBaseline, Snackbar, SnackbarOrigin } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Chats from "./components/Chats";
 import Api from "./components/services/api";
