@@ -4,14 +4,17 @@ import { IMessageEvent, w3cwebsocket as W3CWebsocket } from "websocket";
 import { useAuth0 } from '@auth0/auth0-react';
 import Api from "./components/services/api"
 import useFetchMetaData from "./hooks/useFetchMetadata";
+import { Box } from '@mui/material';
+import PreAuthorization from './PreAuthorization';
+
 
 
 
 function WsLayer() {
  const {getAccessTokenSilently} = useAuth0()
  const [token, setToken] = useState("");
- const [ready, setReady] = useState(false)
  const userMetaData = useFetchMetaData()
+ const [verified, setVerified] = useState(false)
 
 
 
@@ -28,8 +31,10 @@ function WsLayer() {
 
 
     const handleLiveMessages =  () => {
+      console.log(token);
+      
         
-    const client = new W3CWebsocket(`ws://127.0.0.1:5003/websockets?check=${token}`);  
+    const client = new W3CWebsocket(`ws://rgt-chatapp.herokuapp.com/websockets?check=${token}`);  
       return client
     };
       
@@ -39,21 +44,23 @@ function WsLayer() {
             audience: `localhost:5003`,
             scope: "read:current_user",
           });
-          await Api("http://localhost:5003", accessToken).get("/authorized");
-          handleLiveMessages();
+          
+          await Api("http://rgt-chatapp.herokuapp.com", accessToken).get("/authorized");
+          setVerified(true)
         } catch (err) {}
       };
       useEffect(()=>{
         show();
         registerToken()
         // handleLiveMessages()
+
       },[])
 
 
   return (
     <>
-    <ChatPageLayout client = {handleLiveMessages()}/>
-    
+    {verified && <ChatPageLayout client = {handleLiveMessages()} refresh = {show}/>}
+    {!verified && <PreAuthorization/>}
     </>
   )
 }

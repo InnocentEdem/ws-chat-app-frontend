@@ -153,6 +153,7 @@ function Contacts({
             {contactList?.length ? (
               contactList.map((element: any, index: number) => (
                 <Box
+                key = {element?.email}
                   className={
                     index === activeContact
                       ? contactStyle.activeclass

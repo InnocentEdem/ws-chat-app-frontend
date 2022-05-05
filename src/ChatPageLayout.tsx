@@ -7,6 +7,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import ActiveChat from "./components/ActiveChat";
 import useFetchMetaData from "./hooks/useFetchMetadata";
 import Contacts from "./components/Contacts";
+import { SettingsRemoteSharp } from "@mui/icons-material";
 
 interface IMessage {
   createdAt: Date;
@@ -20,13 +21,11 @@ export interface State extends SnackbarOrigin {
   open: boolean;
 }
 
-function ChatPageLayout({ client }: { client?: any }) {
+function ChatPageLayout({ client,refresh }: { client?: any, refresh:any }) {
   const {
     user,
     isAuthenticated,
     isLoading,
-    getAccessTokenSilently,
-    getAccessTokenWithPopup,
   } = useAuth0();
 
   const [messages, setMessages] = useState<IMessage[]>();
@@ -38,6 +37,8 @@ function ChatPageLayout({ client }: { client?: any }) {
   const [blockList, setBlockList] = useState<string[]|undefined>();
   const [usersBlockedByCurrentUser, setUsersBlockedByCurrentUser] = useState<string[]>()
   const [snackbarState, setSnackbarState] = useState({open:false, message:"",severity:0,title:""})
+  const [tries,setTries] = useState(0)
+  const [connected, setConnected] = useState(false)
 
 
   const handleClose =()=>{
@@ -53,12 +54,17 @@ function ChatPageLayout({ client }: { client?: any }) {
   }
   
   client.onopen = () => {
-    
+    setTries(5)    
+    setConnected(true)
   };
   client.onmessage = (message: any) => {
     console.log("message received");
+    console.log(message);
+
 
     const newMessage = JSON.parse(message?.data);
+    console.log(message);
+    
     if (newMessage.category === "users_update") {
       const filter1 = newMessage?.usersOnline.filter((e: string) => e !== user?.email)
       const filter2 = filter1?.filter((e: string) => !blockList?.includes(e))
@@ -72,15 +78,23 @@ function ChatPageLayout({ client }: { client?: any }) {
       setUsersBlockedByCurrentUser(newMessage?.blockListForBlocker?.map((element:any)=>element.user_blocked))
             
     }
+     else if(newMessage.category === "do_not_sleep"){
+        console.log("Sleeping aint ma kinda thing");
+                    
+    }
     else{
       setMessages(newMessage);
     }
   };
 
   client.onclose = () => {
+    setConnected(false)
     handleSnackAlert("Your connection was terminated",
         1,"Connection Error"
       )
+      // refresh()
+      window.location.reload()
+      
   };
 
   //message utilities
@@ -136,6 +150,18 @@ function ChatPageLayout({ client }: { client?: any }) {
       )
     }
   };
+
+
+  useEffect(()=>{
+    console.log("sent");
+
+    const interval = setInterval(() => {
+      client.send(
+        JSON.stringify({action:"do_not_sleep"})
+      )
+    },2000)
+    return () => clearInterval(interval);
+  },[]);
 
   return (
     <>

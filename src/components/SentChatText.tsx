@@ -22,7 +22,7 @@ function SentChatText({chat}:{chat:IMessage}) {
               <p style ={{padding:"1rem", border:"solid 1px green",margin:"0", borderRadius:"1rem 1rem 1rem 0",width:"auto", minWidth:"20rem", backgroundColor:"",}}>
                  {chat?.msg_text}
                  <Box sx={{display:"flex",justifyContent:"flex-end",marginTop:"2rem"}}>
-                  <Box>{time}</Box>
+                  <Box>{new Date(chat.updatedAt).toUTCString()}</Box>
                   </Box>
               </p>
             
