@@ -1,1 +1,1 @@
-web:react-scripts build
+web:npm start
